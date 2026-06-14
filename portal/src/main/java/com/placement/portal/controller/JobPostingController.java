@@ -16,6 +16,7 @@ public class JobPostingController {
 
     private final JobPostingService jobPostingService;
 
+
     @PostMapping
     public ResponseEntity<JobPostingResponse> create(@Valid @RequestBody JobPostingRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(jobPostingService.create(request));
@@ -47,10 +48,9 @@ public class JobPostingController {
         jobPostingService.delete(id);
         return ResponseEntity.noContent().build();
     }
-    // Student sees all jobs they are eligible for
     @GetMapping("/eligible/{studentId}")
-    public ResponseEntity<List<JobPostingResponse>> getEligible(@PathVariable Long studentId) {
-        return ResponseEntity.ok(jobPostingService.getEligibleJobs(studentId));
+    public ResponseEntity<List<JobOpportunityResponse>> getOpportunities(
+            @PathVariable Long studentId) {
+        return ResponseEntity.ok(jobPostingService.getOpportunitiesForStudent(studentId));
     }
-
 }

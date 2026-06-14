@@ -27,6 +27,7 @@ public class JobPostingService {
                 .ctc(request.getCtc())
                 .jobType(request.getJobType())
                 .location(request.getLocation())
+                .manualReviewEnabled(request.isManualReviewEnabled())
                 .deadline(request.getDeadline())
                 .company(company)
                 .status(PostingStatus.OPEN)
@@ -58,6 +59,7 @@ public class JobPostingService {
         posting.setRequiredSkills(request.getRequiredSkills());
         posting.setCtc(request.getCtc());
         posting.setJobType(request.getJobType());
+        posting.setManualReviewEnabled(request.isManualReviewEnabled());
         posting.setLocation(request.getLocation());
         posting.setDeadline(request.getDeadline());
         posting.setEligibleBranches(request.getEligibleBranches());
@@ -90,12 +92,56 @@ public class JobPostingService {
                 .createdAt(j.getCreatedAt())
                 .eligibleBranches(j.getEligibleBranches())
                 .minCgpa(j.getMinCgpa())
+                .manualReviewEnabled(j.isManualReviewEnabled())
                 .build();
     }
-    public List<JobPostingResponse> getEligibleJobs(Long studentId) {
+    public List<JobOpportunityResponse> getOpportunitiesForStudent(Long studentId) {
         Student student = studentService.findById(studentId);
-        return jobPostingRepository
-                .findEligibleJobs(student.getBranch(), student.getCgpa())
-                .stream().map(this::toResponse).collect(Collectors.toList());
+
+        return jobPostingRepository.findByBranch(student.getBranch())
+                .stream()
+                .map(job -> buildOpportunityResponse(job, student))
+                .collect(Collectors.toList());
     }
+
+    private JobOpportunityResponse buildOpportunityResponse(JobPosting job, Student student) {
+        EligibilityStatus status;
+        boolean canApply;
+        String message;
+
+        boolean branchMatch = job.getEligibleBranches() == null
+                || job.getEligibleBranches().contains(student.getBranch());
+
+        boolean cgpaMet = job.getMinCgpa() == null
+                || (student.getCgpa() != null && student.getCgpa() >= job.getMinCgpa());
+
+        if (!branchMatch) {
+            status = EligibilityStatus.NOT_ELIGIBLE;
+            canApply = false;
+            message = "Your branch is not eligible for this posting.";
+        } else if (!cgpaMet) {
+            status = EligibilityStatus.CGPA_BELOW_CUTOFF;
+            if (job.isManualReviewEnabled()) {
+                canApply = true;
+                message = "Your CGPA is below the cutoff (" + job.getMinCgpa()
+                        + "). Manual review is enabled — you may still apply.";
+            } else {
+                canApply = false;
+                message = "Your CGPA (" + student.getCgpa()
+                        + ") is below the required cutoff of " + job.getMinCgpa() + ".";
+            }
+        } else {
+            status = EligibilityStatus.ELIGIBLE;
+            canApply = true;
+            message = "You are eligible to apply.";
+        }
+
+        return JobOpportunityResponse.builder()
+                .jobPosting(toResponse(job))
+                .eligibilityStatus(status)
+                .canApply(canApply)
+                .eligibilityMessage(message)
+                .build();
+    }
+
 }

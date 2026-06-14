@@ -15,6 +15,7 @@ public class InternshipPostingResponse {
     private Double minCgpa;
     private String requiredSkills;
     private Double stipend;
+    private boolean manualReviewEnabled;
     private Integer durationMonths;
     private String mode;
     private LocalDate startDate;

@@ -49,6 +49,7 @@ public class InternshipPostingController {
     }
     // Student sees all jobs they are eligible for
     @GetMapping("/eligible/{studentId}")
-    public ResponseEntity<List<InternshipPostingResponse>> getEligible(@PathVariable Long studentId) {
-        return ResponseEntity.ok(internshipPostingService.getEligibleInternships(studentId));
+    public ResponseEntity<List<InternshipOpportunityResponse>> getOpportunities(
+            @PathVariable Long studentId) {
+        return ResponseEntity.ok(internshipPostingService.getOpportunitiesForStudent(studentId));
     }}

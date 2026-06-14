@@ -12,6 +12,7 @@ public class JobPostingRequest {
     private String title;
     private String eligibleBranches;   // "CSE,ECE,IT"
     private Double minCgpa;
+    private boolean manualReviewEnabled;
 
     private String description;
     private String requiredSkills;

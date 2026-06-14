@@ -13,8 +13,7 @@ public interface InternshipPostingRepository extends JpaRepository<InternshipPos
     List<InternshipPosting> findByStatus(PostingStatus status);
 
     @Query("SELECT i FROM InternshipPosting i WHERE i.status = 'OPEN' " +
-            "AND (i.eligibleBranches IS NULL OR i.eligibleBranches LIKE %:branch%) " +
-            "AND (i.minCgpa IS NULL OR i.minCgpa <= :cgpa)")
-    List<InternshipPosting> findEligibleInternships(@Param("branch") String branch,
-                                                    @Param("cgpa") Double cgpa);
+            "AND (i.eligibleBranches IS NULL OR " +
+            "i.eligibleBranches LIKE CONCAT('%', :branch, '%'))")
+    List<InternshipPosting> findByBranch(@Param("branch") String branch);
 }

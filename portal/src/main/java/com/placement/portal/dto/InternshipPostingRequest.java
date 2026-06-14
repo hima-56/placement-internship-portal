@@ -12,6 +12,7 @@ public class InternshipPostingRequest {
     private String title;
     private String eligibleBranches;
     private Double minCgpa;
+    private boolean manualReviewEnabled;
 
     private String description;
     private String requiredSkills;

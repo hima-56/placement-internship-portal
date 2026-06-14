@@ -1,5 +1,6 @@
 // service/InterviewService.java
 package com.placement.portal.service;
+import com.placement.portal.config.NotificationManager;
 
 import com.placement.portal.dto.*;
 import com.placement.portal.exception.*;
@@ -56,7 +57,8 @@ public class InterviewService {
         // Update application status
         application.setStatus(ApplicationStatus.INTERVIEW_SCHEDULED);
         applicationRepository.save(application);
-
+        NotificationManager.getInstance().notify("STUDENT",
+                "Interview Round " + nextRound + " scheduled at " + request.getScheduledAt());
         return toResponse(interviewRepository.save(interview));
     }
 

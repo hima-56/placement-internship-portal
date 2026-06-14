@@ -18,6 +18,7 @@ public class JobPostingResponse {
     private String jobType;
     private String location;
     private LocalDate deadline;
+    private boolean manualReviewEnabled;
     private PostingStatus status;
     private Long companyId;
     private String companyName;

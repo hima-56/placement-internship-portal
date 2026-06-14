@@ -1,6 +1,6 @@
 // service/ApplicationService.java
 package com.placement.portal.service;
-
+import com.placement.portal.config.NotificationManager;
 import com.placement.portal.dto.*;
 import com.placement.portal.exception.*;
 import com.placement.portal.model.*;
@@ -20,9 +20,8 @@ public class ApplicationService {
     private final InternshipPostingService internshipPostingService;
 
     public ApplicationResponse apply(ApplicationRequest request) {
-        // Validate: exactly one posting type must be provided
         if (request.getJobPostingId() == null && request.getInternshipPostingId() == null)
-            throw new IllegalArgumentException("Either jobPostingId or internshipPostingId must be provided");
+            throw new IllegalArgumentException("Either jobPostingId or internshipPostingId is required");
 
         if (request.getJobPostingId() != null && request.getInternshipPostingId() != null)
             throw new IllegalArgumentException("Provide only one of jobPostingId or internshipPostingId");
@@ -33,9 +32,32 @@ public class ApplicationService {
 
         if (request.getJobPostingId() != null) {
             JobPosting job = jobPostingService.findById(request.getJobPostingId());
+
+            // Eligibility guard
+            boolean cgpaMet = job.getMinCgpa() == null
+                    || (student.getCgpa() != null && student.getCgpa() >= job.getMinCgpa());
+
+            if (!cgpaMet && !job.isManualReviewEnabled())
+                throw new IllegalStateException(
+                        "Application rejected: Your CGPA (" + student.getCgpa()
+                                + ") is below the required cutoff of " + job.getMinCgpa()
+                                + ". This posting does not allow manual review.");
+
             application.setJobPosting(job);
+
         } else {
-            InternshipPosting internship = internshipPostingService.findById(request.getInternshipPostingId());
+            InternshipPosting internship =
+                    internshipPostingService.findById(request.getInternshipPostingId());
+
+            boolean cgpaMet = internship.getMinCgpa() == null
+                    || (student.getCgpa() != null && student.getCgpa() >= internship.getMinCgpa());
+
+            if (!cgpaMet && !internship.isManualReviewEnabled())
+                throw new IllegalStateException(
+                        "Application rejected: Your CGPA (" + student.getCgpa()
+                                + ") is below the required cutoff of " + internship.getMinCgpa()
+                                + ". This posting does not allow manual review.");
+
             application.setInternshipPosting(internship);
         }
 
@@ -100,4 +122,65 @@ public class ApplicationService {
                 .createdAt(a.getCreatedAt())
                 .build();
     }
+
+
+
+    // ... inside shortlist()
+    public ApplicationResponse shortlist(Long applicationId) {
+        Application application = findById(applicationId);
+
+        if (application.getStatus() != ApplicationStatus.APPLIED)
+            throw new IllegalStateException(
+                    "Only applications with status APPLIED can be shortlisted. Current status: "
+                            + application.getStatus());
+
+        application.setStatus(ApplicationStatus.SHORTLISTED);
+        Application saved = applicationRepository.save(application);
+
+        NotificationManager.getInstance().notify("STUDENT",
+                "You have been shortlisted for " +
+                        (saved.getJobPosting() != null ? saved.getJobPosting().getTitle()
+                                : saved.getInternshipPosting().getTitle()));
+
+        return toResponse(saved);
+    }
+    // Bulk shortlist: company shortlists all applicants for a job who meet CGPA threshold
+    public List<ApplicationResponse> bulkShortlistByJob(Long jobPostingId, Double minCgpa) {
+        List<Application> applications = applicationRepository.findByJobPostingId(jobPostingId);
+
+        List<Application> eligible = applications.stream()
+                .filter(a -> a.getStatus() == ApplicationStatus.APPLIED)
+                .filter(a -> a.getStudent().getCgpa() != null && a.getStudent().getCgpa() >= minCgpa)
+                .peek(a -> a.setStatus(ApplicationStatus.SHORTLISTED))
+                .collect(Collectors.toList());
+
+        return applicationRepository.saveAll(eligible)
+                .stream().map(this::toResponse).collect(Collectors.toList());
+    }
+
+    // Reject an application
+    public ApplicationResponse reject(Long applicationId) {
+        Application application = findById(applicationId);
+        application.setStatus(ApplicationStatus.REJECTED);
+        return toResponse(applicationRepository.save(application));
+    }
+
+    // Final selection - mark student as SELECTED (placed)
+    public ApplicationResponse markSelected(Long applicationId) {
+        Application application = findById(applicationId);
+
+        if (application.getStatus() != ApplicationStatus.SHORTLISTED)
+            throw new IllegalStateException(
+                    "Only SHORTLISTED applications can be marked SELECTED. Current status: "
+                            + application.getStatus());
+
+        application.setStatus(ApplicationStatus.SELECTED);
+        NotificationManager.getInstance().notify("STUDENT",
+                "Congratulations! You have been SELECTED for " +
+                        (application.getJobPosting()!= null ? application.getJobPosting().getTitle()
+                                : application.getInternshipPosting().getTitle()));
+        return toResponse(applicationRepository.save(application));
+    }
+
+
 }

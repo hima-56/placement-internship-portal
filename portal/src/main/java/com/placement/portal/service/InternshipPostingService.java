@@ -25,6 +25,7 @@ public class InternshipPostingService {
                 .description(request.getDescription())
                 .requiredSkills(request.getRequiredSkills())
                 .stipend(request.getStipend())
+                .manualReviewEnabled(request.isManualReviewEnabled())
                 .durationMonths(request.getDurationMonths())
                 .mode(request.getMode())
                 .status(PostingStatus.OPEN)
@@ -59,6 +60,7 @@ public class InternshipPostingService {
         posting.setStipend(request.getStipend());
         posting.setDurationMonths(request.getDurationMonths());
         posting.setMode(request.getMode());
+        posting.setManualReviewEnabled(request.isManualReviewEnabled());
         posting.setStartDate(request.getStartDate());
         posting.setEligibleBranches(request.getEligibleBranches());
         posting.setMinCgpa(request.getMinCgpa());
@@ -89,14 +91,58 @@ public class InternshipPostingService {
                 .companyName(i.getCompany().getName())
                 .createdAt(i.getCreatedAt())
                 .eligibleBranches(i.getEligibleBranches())
+                .manualReviewEnabled(i.isManualReviewEnabled())
                 .minCgpa(i.getMinCgpa())
                 .build();
     }
 
-    public List<InternshipPostingResponse> getEligibleInternships(Long studentId) {
+    public List<InternshipOpportunityResponse> getOpportunitiesForStudent(Long studentId) {
         Student student = studentService.findById(studentId);
-        return internshipPostingRepository
-                .findEligibleInternships(student.getBranch(), student.getCgpa())
-                .stream().map(this::toResponse).collect(Collectors.toList());
+
+        return internshipPostingRepository.findByBranch(student.getBranch())
+                .stream()
+                .map(internship -> buildOpportunityResponse(internship, student))
+                .collect(Collectors.toList());
+    }
+
+    private InternshipOpportunityResponse buildOpportunityResponse(InternshipPosting internship,
+                                                                   Student student) {
+        EligibilityStatus status;
+        boolean canApply;
+        String message;
+
+        boolean branchMatch = internship.getEligibleBranches() == null
+                || internship.getEligibleBranches().contains(student.getBranch());
+
+        boolean cgpaMet = internship.getMinCgpa() == null
+                || (student.getCgpa() != null && student.getCgpa() >= internship.getMinCgpa());
+
+        if (!branchMatch) {
+            status = EligibilityStatus.NOT_ELIGIBLE;
+            canApply = false;
+            message = "Your branch is not eligible for this posting.";
+        } else if (!cgpaMet) {
+            status = EligibilityStatus.CGPA_BELOW_CUTOFF;
+            if (internship.isManualReviewEnabled()) {
+                canApply = true;
+                message = "Your CGPA is below the cutoff (" + internship.getMinCgpa()
+                        + "). Manual review is enabled — you may still apply.";
+            } else {
+                canApply = false;
+                message = "Your CGPA (" + student.getCgpa()
+                        + ") is below the required cutoff of " + internship.getMinCgpa() + ".";
+            }
+        } else {
+            status = EligibilityStatus.ELIGIBLE;
+            canApply = true;
+            message = "You are eligible to apply.";
+        }
+
+        return InternshipOpportunityResponse.builder()
+                .internshipPosting(toResponse(internship))
+                .eligibilityStatus(status)
+                .canApply(canApply)
+                .eligibilityMessage(message)
+                .build();
     }
 }

@@ -22,7 +22,8 @@ public abstract class Posting extends BaseEntity {
     @Column(name = "min_cgpa")
     private Double minCgpa;            // e.g. 7.0
     private String requiredSkills;
-
+    @Column(name = "manual_review_enabled")
+    private boolean manualReviewEnabled = false;
     @Enumerated(EnumType.STRING)
     private PostingStatus status = PostingStatus.OPEN;
 
