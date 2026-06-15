@@ -20,4 +20,36 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
     @Query("SELECT i FROM Interview i WHERE i.application.id = :applicationId " +
             "ORDER BY i.roundNumber DESC LIMIT 1")
     Optional<Interview> findLatestRoundByApplicationId(@Param("applicationId") Long applicationId);
+    // Count by result
+    long countByResult(InterviewResult result);
+
+    // Interview stats per job posting
+    @Query("SELECT i.application.jobPosting.company.id, " +
+            "i.application.jobPosting.company.name, " +
+            "i.application.jobPosting.title, " +
+            "COUNT(i), " +
+            "SUM(CASE WHEN i.result = 'PASSED' THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN i.result = 'FAILED' THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN i.result = 'PENDING' THEN 1 ELSE 0 END) " +
+            "FROM Interview i WHERE i.application.jobPosting IS NOT NULL " +
+            "GROUP BY i.application.jobPosting.company.id, " +
+            "i.application.jobPosting.company.name, " +
+            "i.application.jobPosting.title")
+    List<Object[]> findInterviewStatsByJobPosting();
+
+    // Interview stats per internship posting
+    @Query("SELECT i.application.internshipPosting.company.id, " +
+            "i.application.internshipPosting.company.name, " +
+            "i.application.internshipPosting.title, " +
+            "COUNT(i), " +
+            "SUM(CASE WHEN i.result = 'PASSED' THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN i.result = 'FAILED' THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN i.result = 'PENDING' THEN 1 ELSE 0 END) " +
+            "FROM Interview i WHERE i.application.internshipPosting IS NOT NULL " +
+            "GROUP BY i.application.internshipPosting.company.id, " +
+            "i.application.internshipPosting.company.name, " +
+            "i.application.internshipPosting.title")
+    List<Object[]> findInterviewStatsByInternshipPosting();
+
+
 }
