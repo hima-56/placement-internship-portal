@@ -1,0 +1,694 @@
+{
+  "info": {
+    "name": "Placement & Internship Management Portal",
+    "description": "Complete API documentation for the Placement & Internship Management Portal built with Spring Boot and MySQL.\n\nBase URL: http://localhost:8080\n\nFeatures covered:\n- Company Registration & Management\n- Job & Internship Postings with Branch/CGPA Filters\n- Student Registration & Applications\n- Eligibility Check\n- Shortlisting (Single & Bulk)\n- Multi-round Interview Scheduling\n- Placement Reports\n- Excel Export",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Companies",
+      "description": "APIs for company registration and management",
+      "item": [
+        {
+          "name": "Register Company",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/companies", "host": ["{{baseUrl}}"], "path": ["api", "companies"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"TechCorp Solutions\",\n  \"domain\": \"Product\",\n  \"email\": \"hr@techcorp.com\",\n  \"location\": \"Hyderabad\",\n  \"description\": \"Leading product-based software company\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Companies",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/companies", "host": ["{{baseUrl}}"], "path": ["api", "companies"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Company By ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/companies/1", "host": ["{{baseUrl}}"], "path": ["api", "companies", "1"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Company",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/companies/1", "host": ["{{baseUrl}}"], "path": ["api", "companies", "1"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"TechCorp Solutions Updated\",\n  \"domain\": \"Product\",\n  \"email\": \"hr@techcorp.com\",\n  \"location\": \"Bangalore\",\n  \"description\": \"Updated description\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Company",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/companies/1", "host": ["{{baseUrl}}"], "path": ["api", "companies", "1"] }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Students",
+      "description": "APIs for student registration and management",
+      "item": [
+        {
+          "name": "Register Student",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/students", "host": ["{{baseUrl}}"], "path": ["api", "students"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Hima Reddy\",\n  \"email\": \"hima@college.edu\",\n  \"branch\": \"CSE\",\n  \"cgpa\": 8.9,\n  \"skills\": \"Java, Spring Boot, MySQL\",\n  \"resumeUrl\": \"https://drive.google.com/hima-resume\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Students",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/students", "host": ["{{baseUrl}}"], "path": ["api", "students"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Student By ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/students/1", "host": ["{{baseUrl}}"], "path": ["api", "students", "1"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Student",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/students/1", "host": ["{{baseUrl}}"], "path": ["api", "students", "1"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Hima Reddy\",\n  \"email\": \"hima@college.edu\",\n  \"branch\": \"CSE\",\n  \"cgpa\": 9.0,\n  \"skills\": \"Java, Spring Boot, MySQL, Docker\",\n  \"resumeUrl\": \"https://drive.google.com/hima-resume-v2\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Student",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/students/1", "host": ["{{baseUrl}}"], "path": ["api", "students", "1"] }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Job Postings",
+      "description": "APIs for job posting management with branch and CGPA eligibility filters",
+      "item": [
+        {
+          "name": "Create Job Posting",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/job-postings", "host": ["{{baseUrl}}"], "path": ["api", "job-postings"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Backend Developer\",\n  \"description\": \"Build scalable REST APIs using Spring Boot\",\n  \"requiredSkills\": \"Java, Spring Boot, MySQL\",\n  \"ctc\": 12.0,\n  \"jobType\": \"Full-time\",\n  \"location\": \"Hyderabad\",\n  \"deadline\": \"2026-07-15\",\n  \"companyId\": 1,\n  \"eligibleBranches\": \"CSE,IT\",\n  \"minCgpa\": 7.0,\n  \"manualReviewEnabled\": false\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Job Postings",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/job-postings", "host": ["{{baseUrl}}"], "path": ["api", "job-postings"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Job Posting By ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/job-postings/1", "host": ["{{baseUrl}}"], "path": ["api", "job-postings", "1"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Eligible Jobs For Student",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/job-postings/eligible/1", "host": ["{{baseUrl}}"], "path": ["api", "job-postings", "eligible", "1"] }
+          },
+          "response": [],
+          "_postman_notes": "Returns jobs filtered by student's branch and CGPA. Each result includes eligibilityStatus (ELIGIBLE, CGPA_BELOW_CUTOFF, NOT_ELIGIBLE), canApply flag, and eligibilityMessage."
+        },
+        {
+          "name": "Get Jobs By Company",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/job-postings/company/1", "host": ["{{baseUrl}}"], "path": ["api", "job-postings", "company", "1"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Job Posting",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/job-postings/1", "host": ["{{baseUrl}}"], "path": ["api", "job-postings", "1"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Senior Backend Developer\",\n  \"description\": \"Build scalable REST APIs using Spring Boot\",\n  \"requiredSkills\": \"Java, Spring Boot, MySQL, Microservices\",\n  \"ctc\": 15.0,\n  \"jobType\": \"Full-time\",\n  \"location\": \"Hyderabad\",\n  \"deadline\": \"2026-07-30\",\n  \"companyId\": 1,\n  \"eligibleBranches\": \"CSE,IT\",\n  \"minCgpa\": 7.5,\n  \"manualReviewEnabled\": false\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Job Posting",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/job-postings/1", "host": ["{{baseUrl}}"], "path": ["api", "job-postings", "1"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Job Posting (Manual Review Enabled)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/job-postings", "host": ["{{baseUrl}}"], "path": ["api", "job-postings"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Systems Engineer\",\n  \"description\": \"Work on enterprise IT solutions\",\n  \"requiredSkills\": \"Java, SQL, Communication\",\n  \"ctc\": 6.5,\n  \"jobType\": \"Full-time\",\n  \"location\": \"Bangalore\",\n  \"deadline\": \"2026-07-20\",\n  \"companyId\": 2,\n  \"eligibleBranches\": \"CSE,IT,ECE\",\n  \"minCgpa\": 6.0,\n  \"manualReviewEnabled\": true\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Internship Postings",
+      "description": "APIs for internship posting management with branch and CGPA eligibility filters",
+      "item": [
+        {
+          "name": "Create Internship Posting",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/internship-postings", "host": ["{{baseUrl}}"], "path": ["api", "internship-postings"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Backend Intern\",\n  \"description\": \"Work on REST APIs and database design\",\n  \"requiredSkills\": \"Java, Spring Boot\",\n  \"stipend\": 20000,\n  \"durationMonths\": 6,\n  \"mode\": \"Hybrid\",\n  \"startDate\": \"2026-07-01\",\n  \"companyId\": 1,\n  \"eligibleBranches\": \"CSE,IT\",\n  \"minCgpa\": 6.5,\n  \"manualReviewEnabled\": false\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Internship Postings",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/internship-postings", "host": ["{{baseUrl}}"], "path": ["api", "internship-postings"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Internship Posting By ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/internship-postings/1", "host": ["{{baseUrl}}"], "path": ["api", "internship-postings", "1"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Eligible Internships For Student",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/internship-postings/eligible/1", "host": ["{{baseUrl}}"], "path": ["api", "internship-postings", "eligible", "1"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Internships By Company",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/internship-postings/company/1", "host": ["{{baseUrl}}"], "path": ["api", "internship-postings", "company", "1"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Internship Posting",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/internship-postings/1", "host": ["{{baseUrl}}"], "path": ["api", "internship-postings", "1"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Backend Intern\",\n  \"description\": \"Work on REST APIs and database design\",\n  \"requiredSkills\": \"Java, Spring Boot, MySQL\",\n  \"stipend\": 25000,\n  \"durationMonths\": 6,\n  \"mode\": \"Remote\",\n  \"startDate\": \"2026-08-01\",\n  \"companyId\": 1,\n  \"eligibleBranches\": \"CSE,IT\",\n  \"minCgpa\": 7.0,\n  \"manualReviewEnabled\": false\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Internship Posting",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/internship-postings/1", "host": ["{{baseUrl}}"], "path": ["api", "internship-postings", "1"] }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5. Applications",
+      "description": "APIs for student applications, shortlisting and selection workflow",
+      "item": [
+        {
+          "name": "Apply to Job Posting",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/applications", "host": ["{{baseUrl}}"], "path": ["api", "applications"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentId\": 1,\n  \"jobPostingId\": 1\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Apply to Internship Posting",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/applications", "host": ["{{baseUrl}}"], "path": ["api", "applications"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentId\": 1,\n  \"internshipPostingId\": 1\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Applications",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/applications", "host": ["{{baseUrl}}"], "path": ["api", "applications"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Application By ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/applications/1", "host": ["{{baseUrl}}"], "path": ["api", "applications", "1"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Applications By Student",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/applications/student/1", "host": ["{{baseUrl}}"], "path": ["api", "applications", "student", "1"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Applications By Job Posting",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/applications/job/1", "host": ["{{baseUrl}}"], "path": ["api", "applications", "job", "1"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Applications By Internship Posting",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/applications/internship/1", "host": ["{{baseUrl}}"], "path": ["api", "applications", "internship", "1"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Shortlist Application",
+          "request": {
+            "method": "PUT",
+            "url": { "raw": "{{baseUrl}}/api/applications/1/shortlist", "host": ["{{baseUrl}}"], "path": ["api", "applications", "1", "shortlist"] }
+          },
+          "response": [],
+          "_postman_notes": "Changes application status from APPLIED to SHORTLISTED. No request body needed."
+        },
+        {
+          "name": "Bulk Shortlist By Job (CGPA Cutoff)",
+          "request": {
+            "method": "PUT",
+            "url": {
+              "raw": "{{baseUrl}}/api/applications/job/1/bulk-shortlist?minCgpa=7.0",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "applications", "job", "1", "bulk-shortlist"],
+              "query": [{ "key": "minCgpa", "value": "7.0" }]
+            }
+          },
+          "response": [],
+          "_postman_notes": "Shortlists all APPLIED students for job posting 1 who have CGPA >= 7.0"
+        },
+        {
+          "name": "Mark Application as Selected",
+          "request": {
+            "method": "PUT",
+            "url": { "raw": "{{baseUrl}}/api/applications/1/select", "host": ["{{baseUrl}}"], "path": ["api", "applications", "1", "select"] }
+          },
+          "response": [],
+          "_postman_notes": "Final selection — marks student as SELECTED (placed). Application must be SHORTLISTED first."
+        },
+        {
+          "name": "Reject Application",
+          "request": {
+            "method": "PUT",
+            "url": { "raw": "{{baseUrl}}/api/applications/1/reject", "host": ["{{baseUrl}}"], "path": ["api", "applications", "1", "reject"] }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "6. Interviews",
+      "description": "APIs for scheduling and managing multi-round interviews",
+      "item": [
+        {
+          "name": "Schedule Interview Round",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/interviews", "host": ["{{baseUrl}}"], "path": ["api", "interviews"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"applicationId\": 1,\n  \"scheduledAt\": \"2026-06-20T10:30:00\",\n  \"mode\": \"Online\",\n  \"feedback\": \"Round 1 - Technical screening\"\n}"
+            }
+          },
+          "response": [],
+          "_postman_notes": "Round number is auto-determined. Round 1 is assigned if no previous round exists. Next round is only allowed if previous round result is PASSED."
+        },
+        {
+          "name": "Update Interview Result",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/interviews/1/result", "host": ["{{baseUrl}}"], "path": ["api", "interviews", "1", "result"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"result\": \"PASSED\",\n  \"feedback\": \"Excellent DSA skills, proceed to round 2\"\n}"
+            }
+          },
+          "response": [],
+          "_postman_notes": "result must be PASSED or FAILED. If FAILED, application is marked REJECTED automatically."
+        },
+        {
+          "name": "Update Interview Result (FAILED)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/interviews/1/result", "host": ["{{baseUrl}}"], "path": ["api", "interviews", "1", "result"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"result\": \"FAILED\",\n  \"feedback\": \"Needs improvement in system design\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Interviews For Student",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/interviews/student/1", "host": ["{{baseUrl}}"], "path": ["api", "interviews", "student", "1"] }
+          },
+          "response": [],
+          "_postman_notes": "Student can view all their scheduled interviews across all applications and rounds."
+        },
+        {
+          "name": "Get Interview Round History For Application",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/interviews/application/1", "host": ["{{baseUrl}}"], "path": ["api", "interviews", "application", "1"] }
+          },
+          "response": [],
+          "_postman_notes": "Returns all rounds (round 1, round 2, etc.) for a specific application."
+        }
+      ]
+    },
+    {
+      "name": "7. Reports",
+      "description": "Placement analytics and reporting APIs",
+      "item": [
+        {
+          "name": "Overall Placement Summary",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/reports/summary", "host": ["{{baseUrl}}"], "path": ["api", "reports", "summary"] }
+          },
+          "response": [],
+          "_postman_notes": "Returns: totalStudents, totalPlaced, totalUnplaced, placementPercentage, totalApplications, totalCompanies, averageCtc, averageStipend"
+        },
+        {
+          "name": "Branch-wise Placement Report",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/reports/branch-wise", "host": ["{{baseUrl}}"], "path": ["api", "reports", "branch-wise"] }
+          },
+          "response": [],
+          "_postman_notes": "Returns placement stats per branch: CSE, ECE, IT, MECH etc. with placed count, unplaced count, placement %, average CGPA."
+        },
+        {
+          "name": "Company-wise Placement Report",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/reports/company-wise", "host": ["{{baseUrl}}"], "path": ["api", "reports", "company-wise"] }
+          },
+          "response": [],
+          "_postman_notes": "Returns per company: totalApplications, shortlisted, selected, rejected, averageCtc, averageStipend."
+        },
+        {
+          "name": "Student Placement Status Report",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/reports/students", "host": ["{{baseUrl}}"], "path": ["api", "reports", "students"] }
+          },
+          "response": [],
+          "_postman_notes": "Returns every student with their current placement status, company placed at, role, type (JOB/INTERNSHIP), and CTC/stipend."
+        },
+        {
+          "name": "Interview Success Rate Report",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/reports/interviews", "host": ["{{baseUrl}}"], "path": ["api", "reports", "interviews"] }
+          },
+          "response": [],
+          "_postman_notes": "Returns per posting: totalInterviews, passed, failed, pending, passRate %."
+        }
+      ]
+    },
+    {
+      "name": "8. Excel Export",
+      "description": "Export placement data as Excel workbook with multiple sheets",
+      "item": [
+        {
+          "name": "Download Full Placement Report (Excel)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/export/full-report", "host": ["{{baseUrl}}"], "path": ["api", "export", "full-report"] }
+          },
+          "response": [],
+          "_postman_notes": "Downloads placement_report.xlsx with 5 sheets:\n1. Placement Summary\n2. Student Report\n3. Branch-wise Report\n4. Company-wise Report\n5. Interview Report\n\nIn Postman: Click Send → Save Response → Save to a file → Save as placement_report.xlsx"
+        }
+      ]
+    },
+    {
+      "name": "9. Notifications",
+      "description": "Singleton pattern - notification log",
+      "item": [
+        {
+          "name": "Get All Notifications",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/notifications", "host": ["{{baseUrl}}"], "path": ["api", "notifications"] }
+          },
+          "response": [],
+          "_postman_notes": "Returns all notifications generated by the Singleton NotificationManager. Notifications are created on shortlisting, interview scheduling, and final selection."
+        }
+      ]
+    },
+    {
+      "name": "--- Workflow Examples ---",
+      "description": "End-to-end workflow examples for testing",
+      "item": [
+        {
+          "name": "Step 1 - Create Company",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/companies", "host": ["{{baseUrl}}"], "path": ["api", "companies"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"TechCorp Solutions\",\n  \"domain\": \"Product\",\n  \"email\": \"hr@techcorp.com\",\n  \"location\": \"Hyderabad\",\n  \"description\": \"Leading product-based software company\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Step 2 - Register Student",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/students", "host": ["{{baseUrl}}"], "path": ["api", "students"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Hima Reddy\",\n  \"email\": \"hima@college.edu\",\n  \"branch\": \"CSE\",\n  \"cgpa\": 8.9,\n  \"skills\": \"Java, Spring Boot, MySQL\",\n  \"resumeUrl\": \"https://drive.google.com/hima-resume\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Step 3 - Post Job with Filters",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/job-postings", "host": ["{{baseUrl}}"], "path": ["api", "job-postings"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Backend Developer\",\n  \"description\": \"Build scalable REST APIs\",\n  \"requiredSkills\": \"Java, Spring Boot, MySQL\",\n  \"ctc\": 12.0,\n  \"jobType\": \"Full-time\",\n  \"location\": \"Hyderabad\",\n  \"deadline\": \"2026-07-15\",\n  \"companyId\": 1,\n  \"eligibleBranches\": \"CSE,IT\",\n  \"minCgpa\": 7.0,\n  \"manualReviewEnabled\": false\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Step 4 - Student Checks Eligible Jobs",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/job-postings/eligible/1", "host": ["{{baseUrl}}"], "path": ["api", "job-postings", "eligible", "1"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Step 5 - Student Applies",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/applications", "host": ["{{baseUrl}}"], "path": ["api", "applications"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentId\": 1,\n  \"jobPostingId\": 1\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Step 6 - Company Shortlists",
+          "request": {
+            "method": "PUT",
+            "url": { "raw": "{{baseUrl}}/api/applications/1/shortlist", "host": ["{{baseUrl}}"], "path": ["api", "applications", "1", "shortlist"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Step 7 - Schedule Round 1",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/interviews", "host": ["{{baseUrl}}"], "path": ["api", "interviews"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"applicationId\": 1,\n  \"scheduledAt\": \"2026-06-20T10:30:00\",\n  \"mode\": \"Online\",\n  \"feedback\": \"Round 1 - Technical\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Step 8 - Student Views Interview",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/interviews/student/1", "host": ["{{baseUrl}}"], "path": ["api", "interviews", "student", "1"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Step 9 - Mark Round 1 PASSED",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/interviews/1/result", "host": ["{{baseUrl}}"], "path": ["api", "interviews", "1", "result"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"result\": \"PASSED\",\n  \"feedback\": \"Excellent performance\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Step 10 - Schedule Round 2",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/interviews", "host": ["{{baseUrl}}"], "path": ["api", "interviews"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"applicationId\": 1,\n  \"scheduledAt\": \"2026-06-25T11:00:00\",\n  \"mode\": \"In-person\",\n  \"feedback\": \"Round 2 - HR and System Design\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Step 11 - Mark Round 2 PASSED",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/interviews/2/result", "host": ["{{baseUrl}}"], "path": ["api", "interviews", "2", "result"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"result\": \"PASSED\",\n  \"feedback\": \"Outstanding candidate\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Step 12 - Final Selection",
+          "request": {
+            "method": "PUT",
+            "url": { "raw": "{{baseUrl}}/api/applications/1/select", "host": ["{{baseUrl}}"], "path": ["api", "applications", "1", "select"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Step 13 - View Placement Summary",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/reports/summary", "host": ["{{baseUrl}}"], "path": ["api", "reports", "summary"] }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

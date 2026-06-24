@@ -1,6 +1,7 @@
 // service/InternshipPostingService.java
 package com.placement.portal.service;
 
+import com.placement.portal.config.PostingFactory;
 import com.placement.portal.dto.*;
 import com.placement.portal.exception.ResourceNotFoundException;
 import com.placement.portal.model.*;
@@ -16,24 +17,26 @@ public class InternshipPostingService {
     private final StudentService studentService;
     private final InternshipPostingRepository internshipPostingRepository;
     private final CompanyService companyService;
+    private final PostingFactory postingFactory;   // ✅ inject factory
 
     public InternshipPostingResponse create(InternshipPostingRequest request) {
         Company company = companyService.findById(request.getCompanyId());
 
-        InternshipPosting posting = InternshipPosting.builder()
-                .title(request.getTitle())
-                .description(request.getDescription())
-                .requiredSkills(request.getRequiredSkills())
-                .stipend(request.getStipend())
-                .manualReviewEnabled(request.isManualReviewEnabled())
-                .durationMonths(request.getDurationMonths())
-                .mode(request.getMode())
-                .status(PostingStatus.OPEN)
-                .startDate(request.getStartDate())
-                .company(company)
-                .eligibleBranches(request.getEligibleBranches())
-                .minCgpa(request.getMinCgpa())
-                .build();
+        // ✅ Factory creates the right object type
+        InternshipPosting posting = (InternshipPosting) postingFactory.createPosting(PostingFactory.TYPE_INTERNSHIP);
+
+        posting.setTitle(request.getTitle());
+        posting.setDescription(request.getDescription());
+        posting.setRequiredSkills(request.getRequiredSkills());
+        posting.setStatus(PostingStatus.OPEN);
+        posting.setCompany(company);
+        posting.setEligibleBranches(request.getEligibleBranches());
+        posting.setMinCgpa(request.getMinCgpa());
+        posting.setManualReviewEnabled(request.isManualReviewEnabled());
+        posting.setStipend(request.getStipend());
+        posting.setDurationMonths(request.getDurationMonths());
+        posting.setMode(request.getMode());
+        posting.setStartDate(request.getStartDate());
 
         return toResponse(internshipPostingRepository.save(posting));
     }

@@ -1,6 +1,7 @@
 // service/JobPostingService.java
 package com.placement.portal.service;
 
+import com.placement.portal.config.PostingFactory;
 import com.placement.portal.dto.*;
 import com.placement.portal.exception.ResourceNotFoundException;
 import com.placement.portal.model.*;
@@ -16,24 +17,28 @@ public class JobPostingService {
     private final StudentService studentService;
     private final JobPostingRepository jobPostingRepository;
     private final CompanyService companyService;
+    private final PostingFactory postingFactory;
+
 
     public JobPostingResponse create(JobPostingRequest request) {
         Company company = companyService.findById(request.getCompanyId());
 
-        JobPosting posting = JobPosting.builder()
-                .title(request.getTitle())
-                .description(request.getDescription())
-                .requiredSkills(request.getRequiredSkills())
-                .ctc(request.getCtc())
-                .jobType(request.getJobType())
-                .location(request.getLocation())
-                .manualReviewEnabled(request.isManualReviewEnabled())
-                .deadline(request.getDeadline())
-                .company(company)
-                .status(PostingStatus.OPEN)
-                .eligibleBranches(request.getEligibleBranches())
-                .minCgpa(request.getMinCgpa())
-                .build();
+        // ✅ Factory creates the right object type
+        JobPosting posting = (JobPosting) postingFactory.createPosting(PostingFactory.TYPE_JOB);
+
+        // Set fields manually after factory creates the instance
+        posting.setTitle(request.getTitle());
+        posting.setDescription(request.getDescription());
+        posting.setRequiredSkills(request.getRequiredSkills());
+        posting.setStatus(PostingStatus.OPEN);
+        posting.setCompany(company);
+        posting.setEligibleBranches(request.getEligibleBranches());
+        posting.setMinCgpa(request.getMinCgpa());
+        posting.setManualReviewEnabled(request.isManualReviewEnabled());
+        posting.setCtc(request.getCtc());
+        posting.setJobType(request.getJobType());
+        posting.setLocation(request.getLocation());
+        posting.setDeadline(request.getDeadline());
 
         return toResponse(jobPostingRepository.save(posting));
     }
